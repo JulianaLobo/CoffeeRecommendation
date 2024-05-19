@@ -33,6 +33,14 @@ namespace CoffeeRecommendationAPI.Services
             var recommendations = new List<RecommendationDTO>();
             var currentCaffeineLevel = CalculateCurrentCaffeineLevel(recentConsumptions, allCoffees);
 
+            foreach (var consumption in recentConsumptions)
+            {
+                if (!allCoffees.Any(c => c.Code == consumption.Code))
+                {
+                    throw new ArgumentException($"Invalid coffee code: {consumption.Code}");
+                }
+            }
+
             foreach (var coffee in allCoffees)
             {
                 var waitTime = CalculateWaitTime(currentCaffeineLevel, coffee.CaffeineLevel);
@@ -46,6 +54,7 @@ namespace CoffeeRecommendationAPI.Services
 
             return recommendations.OrderBy(r => r.Wait).ToList();
         }
+
 
         private int CalculateCurrentCaffeineLevel(List<RecentConsumptionDTO> recentConsumptions, List<CoffeeModel> allCoffees)
         {
